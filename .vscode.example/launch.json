@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Run Spring Boot Application",
+      "request": "launch",
+      "mainClass": "com.todolist.todo.ToDoApplication",
+      "env": {
+        "DB_URL": "add db url, example: jdbc:postgresql://localhost:5432/db-name",
+        "DB_USER": "add user name",
+        "DB_PASSWORD": "add db user password"
+      }
+    },
+    {
+      "type": "java",
+      "name": "Current File",
+      "request": "launch",
+      "mainClass": "${file}"
+    },
+    {
+      "type": "java",
+      "name": "ToDoApplication",
+      "request": "launch",
+      "mainClass": "com.todolist.todo.ToDoApplication",
+      "projectName": "todo"
+    }
+  ]
+}

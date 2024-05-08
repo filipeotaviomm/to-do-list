@@ -1,0 +1,1 @@
+TRUNCATE TABLE todos; // remover todos os dados da tabela de forma rápida
