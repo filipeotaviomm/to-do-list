@@ -42,9 +42,9 @@ public class ToDoService {
 
     if (foundToDo.isEmpty()) {
       throw new BadRequestException("To do %d does not exist!".formatted(id));
-    } else {
-      return foundToDo.get();
     }
+
+    return foundToDo.get();
   }
 
   public ToDoModel update(Long id, CreateToDoDto payload) {
