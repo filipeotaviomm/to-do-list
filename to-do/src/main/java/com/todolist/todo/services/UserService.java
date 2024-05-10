@@ -3,8 +3,6 @@ package com.todolist.todo.services;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -12,12 +10,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.todolist.todo.dtos.CreateToDoDto;
 import com.todolist.todo.dtos.CreateUserRequestDto;
 import com.todolist.todo.dtos.GetUserResponseDto;
 import com.todolist.todo.dtos.UpdateUserRequestDto;
 import com.todolist.todo.exceptions.BadRequestException;
-import com.todolist.todo.models.ToDoModel;
 import com.todolist.todo.models.UserModel;
 import com.todolist.todo.repositories.UserRepository;
 
@@ -85,7 +81,7 @@ public class UserService {
 
     if (body.email() != null) {
       Optional<UserModel> userByEmail = userRepository.findByEmail(body.email());
-      if (userByEmail.isPresent()) {
+      if (userByEmail.isPresent() && userByEmail.get().getId() != user.getId()) {
         throw new BadRequestException("This email already exists");
       }
       user.setEmail(body.email());
@@ -93,7 +89,7 @@ public class UserService {
 
     if (body.username() != null) {
       Optional<UserModel> userByUsername = userRepository.findByUsername(body.username());
-      if (userByUsername.isPresent()) {
+      if (userByUsername.isPresent() && userByUsername.get().getId() != user.getId()) {
         throw new BadRequestException("This username already exists");
       }
       user.setUsername(body.username());

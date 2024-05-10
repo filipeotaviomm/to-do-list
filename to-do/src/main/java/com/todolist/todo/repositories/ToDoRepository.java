@@ -7,5 +7,4 @@ import com.todolist.todo.models.ToDoModel;
 
 @Repository
 public interface ToDoRepository extends JpaRepository<ToDoModel, Long> {
-
 }

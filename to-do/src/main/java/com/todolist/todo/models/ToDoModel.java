@@ -2,14 +2,18 @@ package com.todolist.todo.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "tb_todos")
+@Getter
+@Setter
 public class ToDoModel {
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @NotBlank(message = "Name is mandatory")
@@ -28,10 +32,10 @@ public class ToDoModel {
   private Priority priority;
 
   @Column(name = "created_at", nullable = false, updatable = false)
-  private Timestamp createdAt = Timestamp.valueOf(LocalDateTime.now());
+  private Timestamp createdAt;
 
-  @Column(name = "updated_at", nullable = false, updatable = false)
-  private Timestamp updatedAt = Timestamp.valueOf(LocalDateTime.now());
+  @Column(name = "updated_at", nullable = false)
+  private Timestamp updatedAt;
 
   public enum Priority {
     LOW,
@@ -49,7 +53,7 @@ public class ToDoModel {
 
   public ToDoModel(
       Long id, String name, String description, boolean accomplished, Priority priority, Timestamp createdAt,
-      Timestamp updatedAt) {
+      Timestamp updatedAt, UserModel user) {
     this.id = id;
     this.name = name;
     this.description = description;
@@ -57,68 +61,6 @@ public class ToDoModel {
     this.priority = priority;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
-  }
-
-  public ToDoModel(String name, String description, boolean accomplished, Priority priority) {
-    this.name = name;
-    this.description = description;
-    this.accomplished = accomplished;
-    this.priority = priority;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public boolean getAccomplished() {
-    return accomplished;
-  }
-
-  public void setAccomplished(boolean accomplished) {
-    this.accomplished = accomplished;
-  }
-
-  public Priority getPriority() {
-    return priority;
-  }
-
-  public void setPriority(Priority priority) {
-    this.priority = priority;
-  }
-
-  public Timestamp getCreatedAt() {
-    return createdAt;
-  }
-
-  public Timestamp setCreatedAt() {
-    return createdAt;
-  }
-
-  public Timestamp getUpdatedAt() {
-    return updatedAt;
-  }
-
-  public void setUpdatedAt(Timestamp updatedAt) {
-    this.updatedAt = updatedAt;
+    this.user = user;
   }
 }

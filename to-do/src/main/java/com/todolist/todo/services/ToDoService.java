@@ -2,71 +2,107 @@ package com.todolist.todo.services;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.todolist.todo.models.ToDoModel;
+import com.todolist.todo.models.UserModel;
 import com.todolist.todo.dtos.CreateToDoDto;
+import com.todolist.todo.dtos.GetToDoResponseDto;
+import com.todolist.todo.dtos.UpdateToDoDto;
 import com.todolist.todo.exceptions.BadRequestException;
 import com.todolist.todo.repositories.ToDoRepository;
+
+import lombok.RequiredArgsConstructor;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import java.time.LocalDateTime;
 import java.sql.Timestamp;
 
 @Service
+@RequiredArgsConstructor
 public class ToDoService {
-  private ToDoRepository toDoRepository;
+  private final ToDoRepository toDoRepository;
+  private final ModelMapper modelMapper = new ModelMapper();
 
-  public ToDoService(ToDoRepository toDoRepository) {
-    this.toDoRepository = toDoRepository;
-  }
+  public GetToDoResponseDto create(CreateToDoDto body, UserModel user) {
 
-  public ToDoModel create(CreateToDoDto payload) {
     var toDo = new ToDoModel();
-    BeanUtils.copyProperties(payload, toDo);
+    BeanUtils.copyProperties(body, toDo);
+    toDo.setUser(user);
+    toDo.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
+    toDo.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
     toDoRepository.save(toDo);
-    return toDo;
+
+    GetToDoResponseDto toDoFormated = modelMapper.map(
+        toDo, GetToDoResponseDto.class);
+
+    return toDoFormated;
   }
 
-  public List<ToDoModel> listAll() {
-    Sort sort = Sort.by(Direction.DESC, "priority")
-        .and(Sort.by(Direction.ASC, "id"));
+  public List<GetToDoResponseDto> listAll() {
 
-    return toDoRepository.findAll(sort);
+    List<ToDoModel> allToDos = toDoRepository.findAll();
+
+    return allToDos.stream()
+        .map(user -> modelMapper.map(user, GetToDoResponseDto.class))
+        .collect(Collectors.toList());
   }
 
-  public ToDoModel list(Long id) {
+  public GetToDoResponseDto list(Long id) {
     Optional<ToDoModel> foundToDo = toDoRepository.findById(id);
 
     if (foundToDo.isEmpty()) {
       throw new BadRequestException("To do %d does not exist!".formatted(id));
     }
 
-    return foundToDo.get();
+    GetToDoResponseDto toDoFormated = modelMapper.map(
+        foundToDo, GetToDoResponseDto.class);
+
+    return toDoFormated;
   }
 
-  public ToDoModel update(Long id, CreateToDoDto payload) {
+  public GetToDoResponseDto update(Long id, UpdateToDoDto body) {
+
     Optional<ToDoModel> foundToDo = toDoRepository.findById(id);
     if (foundToDo.isEmpty()) {
       throw new BadRequestException("To do %d does not exist!".formatted(id));
     }
+
     var toDo = foundToDo.get();
 
-    LocalDateTime now = LocalDateTime.now();
-    Timestamp updatedAt = Timestamp.valueOf(now);
-    toDo.setUpdatedAt(updatedAt);
+    if (body.name() != null) {
+      toDo.setName(body.name());
+    }
 
-    BeanUtils.copyProperties(payload, toDo);
+    if (body.description() != null) {
+      toDo.setDescription(body.description());
+    }
+
+    if (body.accomplished()) {
+      toDo.setAccomplished(body.accomplished());
+    }
+
+    if (body.priority() != null) {
+      toDo.setPriority(body.priority());
+    }
+
+    toDo.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+
     toDoRepository.save(toDo);
-    return toDo;
+
+    GetToDoResponseDto toDoFormated = modelMapper.map(
+        toDo, GetToDoResponseDto.class);
+
+    return toDoFormated;
   }
 
-  public void delete(Long id) {
+  public void deleteToDo(Long id) {
     Optional<ToDoModel> foundToDo = toDoRepository.findById(id);
     if (foundToDo.isEmpty()) {
-      throw new BadRequestException("To do %d does not exist!".formatted(id));
+      throw new BadRequestException("This user does not exist");
     }
     toDoRepository.delete(foundToDo.get());
   }

@@ -45,21 +45,14 @@ public class UserModel {
   // private Set<RoleModel> roles;
 
   public UserModel() {
-
   }
 
-  public UserModel(
-      UUID id, String name, String email, String username) {
+  public UserModel(UUID id, String name, String email, String username, String password, List<ToDoModel> toDos) {
     this.id = id;
     this.name = name;
     this.email = email;
     this.username = username;
-  }
-
-  public UserModel(String name, String email, String username, String password) {
-    this.name = name;
-    this.email = email;
-    this.username = username;
     this.password = password;
+    this.toDos = toDos;
   }
 }
