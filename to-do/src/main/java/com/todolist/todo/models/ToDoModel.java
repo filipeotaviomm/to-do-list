@@ -5,8 +5,6 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Timestamp;
-
 @Entity
 @Table(name = "tb_todos")
 @Getter
@@ -31,12 +29,6 @@ public class ToDoModel {
   @Enumerated(EnumType.STRING)
   private Priority priority;
 
-  @Column(name = "created_at", nullable = false, updatable = false)
-  private Timestamp createdAt;
-
-  @Column(name = "updated_at", nullable = false)
-  private Timestamp updatedAt;
-
   public enum Priority {
     LOW,
     MEDIUM,
@@ -52,15 +44,12 @@ public class ToDoModel {
   }
 
   public ToDoModel(
-      Long id, String name, String description, boolean accomplished, Priority priority, Timestamp createdAt,
-      Timestamp updatedAt, UserModel user) {
+      Long id, String name, String description, boolean accomplished, Priority priority, UserModel user) {
     this.id = id;
     this.name = name;
     this.description = description;
     this.accomplished = accomplished;
     this.priority = priority;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
     this.user = user;
   }
 }

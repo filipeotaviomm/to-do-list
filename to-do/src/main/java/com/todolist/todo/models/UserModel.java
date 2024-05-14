@@ -35,7 +35,7 @@ public class UserModel {
   @NotBlank(message = "Password is mandatory")
   private String password;
 
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
   @JoinColumn(name = "user_id")
   private List<ToDoModel> toDos;
 
