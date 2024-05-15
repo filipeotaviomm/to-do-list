@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
   @Autowired
-  private CustomUserDetailsService userDetailsService;
+  private CustomUserDetailsService userDetailsService; // mesmo sem usar precisa dele
 
   @Autowired
   SecurityFilter securityFilter;
@@ -33,6 +33,7 @@ public class SecurityConfig {
             .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
             .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
             .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
+            .requestMatchers(HttpMethod.GET, "/user/all").hasRole("ADMIN")
             .anyRequest().authenticated())
         .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();

@@ -2,6 +2,8 @@ package com.todolist.todo.dtos;
 
 import java.util.UUID;
 
+import com.todolist.todo.models.UserModel.UserRole;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,4 +18,5 @@ public class GetUserResponseDto {
         String name;
         String email;
         String username;
+        UserRole role;
 }

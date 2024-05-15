@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.todolist.todo.dtos.CreateToDoDto;
+import com.todolist.todo.dtos.CreateToDoRequestDto;
 import com.todolist.todo.dtos.GetToDoResponseDto;
-import com.todolist.todo.dtos.UpdateToDoDto;
+import com.todolist.todo.dtos.UpdateToDoRequestDto;
 import com.todolist.todo.services.ToDoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class ToDoController {
 
   @PostMapping
   ResponseEntity<GetToDoResponseDto> create(
-      @Valid @RequestBody CreateToDoDto body,
+      @Valid @RequestBody CreateToDoRequestDto body,
       @RequestHeader("Authorization") String token) {
 
     return ResponseEntity.status(HttpStatus.CREATED)
@@ -50,15 +50,15 @@ public class ToDoController {
   @GetMapping("/{id}")
   GetToDoResponseDto list(
       @PathVariable Long id, @RequestHeader("Authorization") String token) {
-    return toDoService.listToDo(id, token);
+    return toDoService.listToDoById(id, token);
   }
 
   @PatchMapping("/{id}")
   GetToDoResponseDto update(
       @PathVariable Long id,
-      @RequestBody UpdateToDoDto payload,
+      @Valid @RequestBody UpdateToDoRequestDto body,
       @RequestHeader("Authorization") String token) {
-    return toDoService.updateToDo(id, payload, token);
+    return toDoService.updateToDo(id, body, token);
   }
 
   @DeleteMapping("/{id}")

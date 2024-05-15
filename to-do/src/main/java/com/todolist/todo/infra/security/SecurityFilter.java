@@ -33,8 +33,10 @@ public class SecurityFilter extends OncePerRequestFilter {
     if (userId != null) {
       UUID userIdUUID = UUID.fromString(userId); // Converter a String para UUID
       UserModel user = userRepository.findById(userIdUUID).orElseThrow(() -> new RuntimeException("User Not Found"));
-      var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-      var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
+      // var authorities = Collections.singletonList(new
+      // SimpleGrantedAuthority("ROLE_USER")); //se não for usar o campo roles passa a
+      // variável "authorities" na linha de baixo no lugar de "user.getAuthorities()"
+      var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
       SecurityContextHolder.getContext().setAuthentication(authentication);
     }
     filterChain.doFilter(request, response);

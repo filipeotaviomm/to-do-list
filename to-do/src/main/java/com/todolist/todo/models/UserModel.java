@@ -2,16 +2,27 @@ package com.todolist.todo.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.List;
 import java.util.UUID;
+import java.util.Collection;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Table(name = "tb_users")
 @Getter
 @Setter
-public class UserModel {
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+public class UserModel implements UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "user_id")
@@ -35,6 +46,14 @@ public class UserModel {
   @NotBlank(message = "Password is mandatory")
   private String password;
 
+  @Enumerated(EnumType.STRING)
+  private UserRole role;
+
+  public enum UserRole {
+    ADMIN,
+    USER
+  }
+
   @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
   @JoinColumn(name = "user_id")
   private List<ToDoModel> toDos;
@@ -44,15 +63,38 @@ public class UserModel {
   // "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
   // private Set<RoleModel> roles;
 
-  public UserModel() {
+  // todo esse código abaixo é responsável pelo roles
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    if (this.role == UserRole.ADMIN)
+      return List.of(
+          new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+    else
+      return List.of(new SimpleGrantedAuthority("ROLE_USER"));
   }
 
-  public UserModel(UUID id, String name, String email, String username, String password, List<ToDoModel> toDos) {
-    this.id = id;
-    this.name = name;
-    this.email = email;
-    this.username = username;
-    this.password = password;
-    this.toDos = toDos;
+  @Override
+  public String getUsername() {
+    return username;
+  }
+
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
+
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return true;
   }
 }

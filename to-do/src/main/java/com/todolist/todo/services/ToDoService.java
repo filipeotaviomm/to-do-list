@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 
 import com.todolist.todo.models.ToDoModel;
 import com.todolist.todo.models.UserModel;
-import com.todolist.todo.dtos.CreateToDoDto;
+import com.todolist.todo.dtos.CreateToDoRequestDto;
 import com.todolist.todo.dtos.GetToDoResponseDto;
-import com.todolist.todo.dtos.UpdateToDoDto;
+import com.todolist.todo.dtos.UpdateToDoRequestDto;
 import com.todolist.todo.exceptions.BadRequestException;
 import com.todolist.todo.repositories.ToDoRepository;
 import com.todolist.todo.repositories.UserRepository;
@@ -48,7 +48,7 @@ public class ToDoService {
     return user.get();
   }
 
-  public GetToDoResponseDto createToDo(CreateToDoDto body, String token) {
+  public GetToDoResponseDto createToDo(CreateToDoRequestDto body, String token) {
 
     UserModel userLogged = this.getUserFromToken(token);
 
@@ -77,7 +77,7 @@ public class ToDoService {
     return filteredToDos;
   }
 
-  public GetToDoResponseDto listToDo(Long id, String token) {
+  public GetToDoResponseDto listToDoById(Long id, String token) {
 
     Optional<ToDoModel> foundToDo = toDoRepository.findById(id);
     if (foundToDo.isEmpty()) {
@@ -95,7 +95,7 @@ public class ToDoService {
     return toDoFormated;
   }
 
-  public GetToDoResponseDto updateToDo(Long id, UpdateToDoDto body, String token) {
+  public GetToDoResponseDto updateToDo(Long id, UpdateToDoRequestDto body, String token) {
 
     Optional<ToDoModel> foundToDo = toDoRepository.findById(id);
     if (foundToDo.isEmpty()) {
