@@ -15,6 +15,7 @@ import com.todolist.todo.dtos.CreateUserRequestDto;
 import com.todolist.todo.dtos.GetUserResponseDto;
 import com.todolist.todo.dtos.UpdateUserRequestDto;
 import com.todolist.todo.exceptions.BadRequestException;
+import com.todolist.todo.exceptions.PermissionDeniedException;
 import com.todolist.todo.models.UserModel;
 import com.todolist.todo.models.UserModel.UserRole;
 import com.todolist.todo.repositories.UserRepository;
@@ -60,13 +61,9 @@ public class UserService {
     }
 
     var user = new UserModel();
-
     BeanUtils.copyProperties(body, user, "password");
 
-    if (body.role() == null) {
-      user.setRole(UserRole.USER);
-    }
-
+    user.setRole(body.role() == null ? UserRole.USER : body.role());
     user.setPassword(passwordEncoder.encode(body.password()));
 
     userRepository.save(user);
@@ -92,7 +89,7 @@ public class UserService {
 
     UserModel userLogged = this.getUserFromToken(token);
     if (foundUser.get() != userLogged && userLogged.getRole() == UserRole.USER) {
-      throw new BadRequestException("You can only access your own profile");
+      throw new PermissionDeniedException("You can only access your own profile");
     }
 
     return modelMapper.map(foundUser.get(), GetUserResponseDto.class);
@@ -109,7 +106,7 @@ public class UserService {
 
     UserModel userLogged = this.getUserFromToken(token);
     if (foundUser.get() != userLogged && userLogged.getRole() == UserRole.USER) {
-      throw new BadRequestException("You can only update your own profile");
+      throw new PermissionDeniedException("You can only update your own profile");
     }
 
     if (body.name() != null) {
@@ -153,7 +150,7 @@ public class UserService {
 
     UserModel userLogged = this.getUserFromToken(token);
     if (foundUser.get() != userLogged && userLogged.getRole() == UserRole.USER) {
-      throw new BadRequestException("You can only delete your own profile");
+      throw new PermissionDeniedException("You can only delete your own profile");
     }
 
     userRepository.delete(foundUser.get());

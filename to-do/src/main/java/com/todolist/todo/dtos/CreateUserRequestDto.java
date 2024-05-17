@@ -5,7 +5,6 @@ import com.todolist.todo.models.UserModel.UserRole;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.*;
 
-
 public record CreateUserRequestDto(
                 @NotNull String name,
                 @NotNull String email,

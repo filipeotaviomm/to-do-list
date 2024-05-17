@@ -21,7 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "id") // usado para a autorização admin
 public class UserModel implements UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -55,8 +55,11 @@ public class UserModel implements UserDetails {
   }
 
   @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
-  @JoinColumn(name = "user_id")
   private List<ToDoModel> toDos;
+
+  @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+  @JoinColumn(name = "address_id")
+  private AddressModel address;
 
   // @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   // @JoinTable(name = "tb_users_roles", joinColumns = @JoinColumn(name =
