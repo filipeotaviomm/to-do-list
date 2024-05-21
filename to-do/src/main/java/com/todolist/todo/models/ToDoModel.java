@@ -1,5 +1,8 @@
 package com.todolist.todo.models;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -16,6 +19,7 @@ import lombok.Setter;
 public class ToDoModel {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "todo_id")
   private Long id;
 
   @NotBlank(message = "Name is mandatory")
@@ -42,18 +46,17 @@ public class ToDoModel {
   @JoinColumn(name = "user_id")
   private UserModel user;
 
-  // public ToDoModel() {
+  @ManyToMany
+  @JoinTable(name = "tb_todo_tag", joinColumns = @JoinColumn(name = "todo_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+  private Set<TagModel> tags = new HashSet<>();
 
-  // }
+  public void addTag(TagModel tag) {
+    this.tags.add(tag);
+    tag.getToDos().add(this);
+  }
 
-  // public ToDoModel(
-  // Long id, String name, String description, boolean accomplished, Priority
-  // priority, UserModel user) {
-  // this.id = id;
-  // this.name = name;
-  // this.description = description;
-  // this.accomplished = accomplished;
-  // this.priority = priority;
-  // this.user = user;
-  // }
+  public void removeTag(TagModel tag) {
+    this.tags.remove(tag);
+    tag.getToDos().remove(this);
+  }
 }

@@ -54,17 +54,12 @@ public class UserModel implements UserDetails {
     USER
   }
 
-  @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
   private List<ToDoModel> toDos;
 
   @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
   @JoinColumn(name = "address_id")
   private AddressModel address;
-
-  // @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  // @JoinTable(name = "tb_users_roles", joinColumns = @JoinColumn(name =
-  // "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-  // private Set<RoleModel> roles;
 
   // todo esse código abaixo é responsável pelo roles
   @Override

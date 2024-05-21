@@ -65,7 +65,7 @@ public class ToDoController {
   ResponseEntity<Void> delete(
       @PathVariable Long id, @RequestHeader("Authorization") String token) {
     toDoService.deleteToDo(id, token);
-    logger.info("Deleted task with ID: {}", id);
+    logger.info("Deleted task with ID: {}", id); // debug
     return ResponseEntity.status(HttpStatus.OK).build();
   }
 }

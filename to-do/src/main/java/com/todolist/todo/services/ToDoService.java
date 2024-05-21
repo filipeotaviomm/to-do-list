@@ -2,7 +2,6 @@ package com.todolist.todo.services;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -14,43 +13,23 @@ import com.todolist.todo.dtos.GetToDoResponseDto;
 import com.todolist.todo.dtos.UpdateToDoRequestDto;
 import com.todolist.todo.exceptions.BadRequestException;
 import com.todolist.todo.repositories.ToDoRepository;
-import com.todolist.todo.repositories.UserRepository;
+import com.todolist.todo.utils.TokenUtil;
 
 import lombok.RequiredArgsConstructor;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
-
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
 
 @Service
 @RequiredArgsConstructor
 public class ToDoService {
   private final ToDoRepository toDoRepository;
-  private final UserRepository UserRepository;
   private final ModelMapper modelMapper = new ModelMapper();
-  @Value("${api.security.token.secret}")
-  private String secretKey;
-
-  private UserModel getUserFromToken(String token) {
-
-    DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(secretKey))
-        .build()
-        .verify(token.replace("Bearer ", ""));
-
-    String userId = decodedJWT.getSubject();
-
-    Optional<UserModel> user = UserRepository.findById(UUID.fromString(userId));
-
-    return user.get();
-  }
+  private final TokenUtil tokenUtil;
 
   public GetToDoResponseDto createToDo(CreateToDoRequestDto body, String token) {
 
-    UserModel userLogged = this.getUserFromToken(token);
+    UserModel userLogged = tokenUtil.getUserFromToken(token);
 
     var toDo = new ToDoModel();
     BeanUtils.copyProperties(body, toDo);
@@ -65,7 +44,7 @@ public class ToDoService {
 
   public List<GetToDoResponseDto> listAllToDos(String token) {
 
-    UserModel userLogged = this.getUserFromToken(token);
+    UserModel userLogged = tokenUtil.getUserFromToken(token);
 
     List<ToDoModel> allToDos = toDoRepository.findAll();
 
@@ -84,7 +63,7 @@ public class ToDoService {
       throw new BadRequestException("To do %d does not exist!".formatted(id));
     }
 
-    UserModel userLogged = this.getUserFromToken(token);
+    UserModel userLogged = tokenUtil.getUserFromToken(token);
     if (foundToDo.get().getUser() != userLogged) {
       throw new BadRequestException("You can only list your to dos");
     }
@@ -102,7 +81,7 @@ public class ToDoService {
       throw new BadRequestException("To do %d does not exist!".formatted(id));
     }
 
-    UserModel userLogged = this.getUserFromToken(token);
+    UserModel userLogged = tokenUtil.getUserFromToken(token);
     if (foundToDo.get().getUser() != userLogged) {
       throw new BadRequestException("You can only update your to dos");
     }
@@ -139,9 +118,9 @@ public class ToDoService {
       throw new BadRequestException("This user does not exist");
     }
 
-    UserModel userLogged = this.getUserFromToken(token);
+    UserModel userLogged = tokenUtil.getUserFromToken(token);
     if (foundToDo.get().getUser() != userLogged) {
-      throw new BadRequestException("You can only update your to dos");
+      throw new BadRequestException("You can only delete your to dos");
     }
 
     toDoRepository.delete(foundToDo.get());

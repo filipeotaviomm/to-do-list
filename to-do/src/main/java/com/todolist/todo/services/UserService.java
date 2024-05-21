@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +18,9 @@ import com.todolist.todo.exceptions.PermissionDeniedException;
 import com.todolist.todo.models.UserModel;
 import com.todolist.todo.models.UserModel.UserRole;
 import com.todolist.todo.repositories.UserRepository;
+import com.todolist.todo.utils.TokenUtil;
 
 import lombok.RequiredArgsConstructor;
-
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
 
 @Service
 @RequiredArgsConstructor
@@ -32,21 +28,7 @@ public class UserService {
   private final UserRepository userRepository;
   private final BCryptPasswordEncoder passwordEncoder;
   private final ModelMapper modelMapper = new ModelMapper();
-  @Value("${api.security.token.secret}")
-  private String secretKey;
-
-  private UserModel getUserFromToken(String token) {
-
-    DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(secretKey))
-        .build()
-        .verify(token.replace("Bearer ", ""));
-
-    String userId = decodedJWT.getSubject();
-
-    Optional<UserModel> user = userRepository.findById(UUID.fromString(userId));
-
-    return user.get();
-  }
+  private final TokenUtil tokenUtil;
 
   public GetUserResponseDto createUser(CreateUserRequestDto body) {
 
@@ -87,7 +69,7 @@ public class UserService {
       throw new BadRequestException("This user does not exist");
     }
 
-    UserModel userLogged = this.getUserFromToken(token);
+    UserModel userLogged = tokenUtil.getUserFromToken(token);
     if (foundUser.get() != userLogged && userLogged.getRole() == UserRole.USER) {
       throw new PermissionDeniedException("You can only access your own profile");
     }
@@ -104,7 +86,7 @@ public class UserService {
       throw new BadRequestException("This user does not exist!");
     }
 
-    UserModel userLogged = this.getUserFromToken(token);
+    UserModel userLogged = tokenUtil.getUserFromToken(token);
     if (foundUser.get() != userLogged && userLogged.getRole() == UserRole.USER) {
       throw new PermissionDeniedException("You can only update your own profile");
     }
@@ -148,7 +130,7 @@ public class UserService {
       throw new BadRequestException("This user does not exist");
     }
 
-    UserModel userLogged = this.getUserFromToken(token);
+    UserModel userLogged = tokenUtil.getUserFromToken(token);
     if (foundUser.get() != userLogged && userLogged.getRole() == UserRole.USER) {
       throw new PermissionDeniedException("You can only delete your own profile");
     }
