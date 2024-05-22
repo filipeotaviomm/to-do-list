@@ -1,15 +1,15 @@
-package com.todolist.todo.dtos;
+package com.todolist.todo.dtos.address;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetAddressResponseDto {
+public class AddressResponseDto {
   Long id;
   String street;
   Integer number;

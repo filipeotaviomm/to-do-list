@@ -10,9 +10,9 @@ import com.todolist.todo.models.TagModel;
 import com.todolist.todo.models.ToDoModel;
 import com.todolist.todo.models.UserModel;
 import com.todolist.todo.models.UserModel.UserRole;
-import com.todolist.todo.dtos.GetToDoTagResponseDto;
-import com.todolist.todo.dtos.TagRequestDto;
-import com.todolist.todo.dtos.TagResponseDto;
+import com.todolist.todo.dtos.tag.TagRequestDto;
+import com.todolist.todo.dtos.tag.TagResponseDto;
+import com.todolist.todo.dtos.tag.ToDoTagResponseDto;
 import com.todolist.todo.exceptions.BadRequestException;
 import com.todolist.todo.exceptions.PermissionDeniedException;
 import com.todolist.todo.repositories.TagRepository;
@@ -31,7 +31,7 @@ public class TagService {
   private final TokenUtil tokenUtil;
   private final ModelMapper modelMapper = new ModelMapper();
 
-  public GetToDoTagResponseDto createTagAndAddToToDo(
+  public ToDoTagResponseDto createTagAndAddToToDo(
       Long toDoId, TagRequestDto body, String token) {
 
     Optional<ToDoModel> foundToDo = toDoRepository.findById(toDoId);
@@ -65,7 +65,7 @@ public class TagService {
 
     toDoRepository.save(toDo);
 
-    return modelMapper.map(toDo, GetToDoTagResponseDto.class);
+    return modelMapper.map(toDo, ToDoTagResponseDto.class);
   }
 
   public List<TagResponseDto> listAllTags() {
@@ -105,6 +105,11 @@ public class TagService {
     TagModel tag = foundTag.get();
     String tagName = body.name().toLowerCase();
 
+    Optional<TagModel> existingTag = tagRepository.findByName(tagName);
+    if (existingTag.isPresent()) {
+      throw new BadRequestException("This tag already exist");
+    }
+
     tag.setName(tagName);
     tagRepository.save(tag);
 
@@ -125,7 +130,7 @@ public class TagService {
     return modelMapper.map(foundTag.get(), TagResponseDto.class);
   }
 
-  public GetToDoTagResponseDto removeTagFromToDo(Long toDoId, Long tagId, String token) {
+  public ToDoTagResponseDto removeTagFromToDo(Long toDoId, Long tagId, String token) {
 
     Optional<ToDoModel> foundToDo = toDoRepository.findById(toDoId);
     if (foundToDo.isEmpty()) {
@@ -138,6 +143,12 @@ public class TagService {
     }
 
     ToDoModel toDo = foundToDo.get();
+
+    Boolean toDoHasTag = toDo.getTags().stream().anyMatch(t -> t.getId().equals(tagId));
+    if (!toDoHasTag) {
+      throw new BadRequestException("Tag %d does not exist in this to do".formatted(tagId));
+    }
+
     TagModel tag = foundTag.get();
 
     UserModel userLogged = tokenUtil.getUserFromToken(token);
@@ -149,7 +160,7 @@ public class TagService {
     toDo.removeTag(tag);
     toDoRepository.save(toDo);
 
-    return modelMapper.map(toDo, GetToDoTagResponseDto.class);
+    return modelMapper.map(toDo, ToDoTagResponseDto.class);
 
   }
 }

@@ -10,9 +10,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.todolist.todo.dtos.CreateUserRequestDto;
-import com.todolist.todo.dtos.GetUserResponseDto;
-import com.todolist.todo.dtos.UpdateUserRequestDto;
+import com.todolist.todo.dtos.user.CreateUserRequestDto;
+import com.todolist.todo.dtos.user.UpdateUserRequestDto;
+import com.todolist.todo.dtos.user.UserResponseDto;
 import com.todolist.todo.exceptions.BadRequestException;
 import com.todolist.todo.exceptions.PermissionDeniedException;
 import com.todolist.todo.models.UserModel;
@@ -30,7 +30,7 @@ public class UserService {
   private final ModelMapper modelMapper = new ModelMapper();
   private final TokenUtil tokenUtil;
 
-  public GetUserResponseDto createUser(CreateUserRequestDto body) {
+  public UserResponseDto createUser(CreateUserRequestDto body) {
 
     Optional<UserModel> userByEmail = userRepository.findByEmail(body.email());
     if (userByEmail.isPresent()) {
@@ -50,19 +50,19 @@ public class UserService {
 
     userRepository.save(user);
 
-    return modelMapper.map(user, GetUserResponseDto.class);
+    return modelMapper.map(user, UserResponseDto.class);
   }
 
-  public List<GetUserResponseDto> getAllUsers() {
+  public List<UserResponseDto> getAllUsers() {
 
     var allUsers = userRepository.findAll();
 
     return allUsers.stream()
-        .map(user -> modelMapper.map(user, GetUserResponseDto.class))
+        .map(user -> modelMapper.map(user, UserResponseDto.class))
         .collect(Collectors.toList());
   }
 
-  public GetUserResponseDto getUserById(UUID userId, String token) {
+  public UserResponseDto getUserById(UUID userId, String token) {
 
     Optional<UserModel> foundUser = userRepository.findById(userId);
     if (foundUser.isEmpty()) {
@@ -74,10 +74,10 @@ public class UserService {
       throw new PermissionDeniedException("You can only access your own profile");
     }
 
-    return modelMapper.map(foundUser.get(), GetUserResponseDto.class);
+    return modelMapper.map(foundUser.get(), UserResponseDto.class);
   }
 
-  public GetUserResponseDto updateUser(UUID userId, UpdateUserRequestDto body, String token) {
+  public UserResponseDto updateUser(UUID userId, UpdateUserRequestDto body, String token) {
 
     Optional<UserModel> foundUser = userRepository.findById(userId);
     var user = foundUser.get();
@@ -121,7 +121,7 @@ public class UserService {
 
     userRepository.save(user);
 
-    return modelMapper.map(user, GetUserResponseDto.class);
+    return modelMapper.map(user, UserResponseDto.class);
   }
 
   public void deleteUser(UUID id, String token) {

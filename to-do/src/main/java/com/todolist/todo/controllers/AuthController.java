@@ -1,11 +1,10 @@
 package com.todolist.todo.controllers;
 
+import com.todolist.todo.dtos.login.LoginRequestDto;
+import com.todolist.todo.dtos.login.LoginResponseDto;
 import com.todolist.todo.services.AuthService;
 
 import jakarta.validation.Valid;
-
-import com.todolist.todo.dtos.LoginRequestDto;
-import com.todolist.todo.dtos.LoginResponseDto;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;

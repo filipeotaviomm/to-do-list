@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 
 import com.todolist.todo.models.ToDoModel;
 import com.todolist.todo.models.UserModel;
-import com.todolist.todo.dtos.CreateToDoRequestDto;
-import com.todolist.todo.dtos.GetToDoResponseDto;
-import com.todolist.todo.dtos.UpdateToDoRequestDto;
+import com.todolist.todo.dtos.toDo.CreateToDoRequestDto;
+import com.todolist.todo.dtos.toDo.ToDoResponseDto;
+import com.todolist.todo.dtos.toDo.UpdateToDoRequestDto;
 import com.todolist.todo.exceptions.BadRequestException;
 import com.todolist.todo.repositories.ToDoRepository;
 import com.todolist.todo.utils.TokenUtil;
@@ -27,7 +27,7 @@ public class ToDoService {
   private final ModelMapper modelMapper = new ModelMapper();
   private final TokenUtil tokenUtil;
 
-  public GetToDoResponseDto createToDo(CreateToDoRequestDto body, String token) {
+  public ToDoResponseDto createToDo(CreateToDoRequestDto body, String token) {
 
     UserModel userLogged = tokenUtil.getUserFromToken(token);
 
@@ -36,27 +36,27 @@ public class ToDoService {
     toDo.setUser(userLogged);
     toDoRepository.save(toDo);
 
-    GetToDoResponseDto toDoFormated = modelMapper.map(
-        toDo, GetToDoResponseDto.class);
+    ToDoResponseDto toDoFormated = modelMapper.map(
+        toDo, ToDoResponseDto.class);
 
     return toDoFormated;
   }
 
-  public List<GetToDoResponseDto> listAllToDos(String token) {
+  public List<ToDoResponseDto> listAllToDos(String token) {
 
     UserModel userLogged = tokenUtil.getUserFromToken(token);
 
     List<ToDoModel> allToDos = toDoRepository.findAll();
 
-    List<GetToDoResponseDto> filteredToDos = allToDos.stream()
+    List<ToDoResponseDto> filteredToDos = allToDos.stream()
         .filter(toDo -> toDo.getUser().getId().equals(userLogged.getId()))
-        .map(toDo -> modelMapper.map(toDo, GetToDoResponseDto.class))
+        .map(toDo -> modelMapper.map(toDo, ToDoResponseDto.class))
         .collect(Collectors.toList());
 
     return filteredToDos;
   }
 
-  public GetToDoResponseDto listToDoById(Long id, String token) {
+  public ToDoResponseDto listToDoById(Long id, String token) {
 
     Optional<ToDoModel> foundToDo = toDoRepository.findById(id);
     if (foundToDo.isEmpty()) {
@@ -68,13 +68,13 @@ public class ToDoService {
       throw new BadRequestException("You can only list your to dos");
     }
 
-    GetToDoResponseDto toDoFormated = modelMapper.map(
-        foundToDo, GetToDoResponseDto.class);
+    ToDoResponseDto toDoFormated = modelMapper.map(
+        foundToDo, ToDoResponseDto.class);
 
     return toDoFormated;
   }
 
-  public GetToDoResponseDto updateToDo(Long id, UpdateToDoRequestDto body, String token) {
+  public ToDoResponseDto updateToDo(Long id, UpdateToDoRequestDto body, String token) {
 
     Optional<ToDoModel> foundToDo = toDoRepository.findById(id);
     if (foundToDo.isEmpty()) {
@@ -106,8 +106,8 @@ public class ToDoService {
 
     toDoRepository.save(toDo);
 
-    GetToDoResponseDto toDoFormated = modelMapper.map(
-        toDo, GetToDoResponseDto.class);
+    ToDoResponseDto toDoFormated = modelMapper.map(
+        toDo, ToDoResponseDto.class);
 
     return toDoFormated;
   }

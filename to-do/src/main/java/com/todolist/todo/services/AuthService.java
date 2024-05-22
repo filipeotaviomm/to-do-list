@@ -2,9 +2,9 @@ package com.todolist.todo.services;
 
 import com.todolist.todo.models.UserModel;
 import com.todolist.todo.repositories.UserRepository;
-import com.todolist.todo.dtos.LoginRequestDto;
+import com.todolist.todo.dtos.login.LoginRequestDto;
+import com.todolist.todo.dtos.login.LoginResponseDto;
 import com.todolist.todo.exceptions.BadRequestException;
-import com.todolist.todo.dtos.LoginResponseDto;
 import com.todolist.todo.infra.security.TokenService;
 import lombok.RequiredArgsConstructor;
 

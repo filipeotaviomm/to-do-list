@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.todolist.todo.dtos.CreateAddressRequestDto;
-import com.todolist.todo.dtos.GetAddressResponseDto;
+import com.todolist.todo.dtos.address.AddressResponseDto;
+import com.todolist.todo.dtos.address.CreateAddressRequestDto;
 import com.todolist.todo.services.AddressService;
 
 import jakarta.validation.Valid;
@@ -29,7 +29,7 @@ public class AddressController {
   private final AddressService addressService;
 
   @PostMapping("/address")
-  ResponseEntity<GetAddressResponseDto> create(
+  ResponseEntity<AddressResponseDto> create(
       @Valid @RequestBody CreateAddressRequestDto body, @RequestHeader("Authorization") String token) {
 
     return ResponseEntity.status(HttpStatus.CREATED)
@@ -37,18 +37,18 @@ public class AddressController {
   }
 
   @GetMapping("/address")
-  GetAddressResponseDto get(@RequestHeader("Authorization") String token) {
+  AddressResponseDto get(@RequestHeader("Authorization") String token) {
     return addressService.getAddress(token);
   }
 
   @GetMapping("/address/all")
   @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-  List<GetAddressResponseDto> getAll(@RequestHeader("Authorization") String token) {
+  List<AddressResponseDto> getAll(@RequestHeader("Authorization") String token) {
     return addressService.getAllAddresses(token);
   }
 
   @PutMapping("/address/{id}")
-  GetAddressResponseDto update(
+  AddressResponseDto update(
       @PathVariable Long id, @Valid @RequestBody CreateAddressRequestDto body,
       @RequestHeader("Authorization") String token) {
     return addressService.updateAdress(id, body, token);

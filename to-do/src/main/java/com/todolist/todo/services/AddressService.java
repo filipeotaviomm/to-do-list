@@ -8,8 +8,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import com.todolist.todo.dtos.CreateAddressRequestDto;
-import com.todolist.todo.dtos.GetAddressResponseDto;
+import com.todolist.todo.dtos.address.AddressResponseDto;
+import com.todolist.todo.dtos.address.CreateAddressRequestDto;
 import com.todolist.todo.exceptions.BadRequestException;
 import com.todolist.todo.exceptions.PermissionDeniedException;
 import com.todolist.todo.models.AddressModel;
@@ -29,28 +29,33 @@ public class AddressService {
   private final ModelMapper modelMapper = new ModelMapper();
   private final TokenUtil tokenUtil;
 
-  public GetAddressResponseDto createAddress(CreateAddressRequestDto body, String token) {
+  public AddressResponseDto createAddress(CreateAddressRequestDto body, String token) {
 
     AddressModel address = new AddressModel();
     BeanUtils.copyProperties(body, address);
 
     UserModel userLogged = tokenUtil.getUserFromToken(token);
+
+    if (userLogged.getAddress() != null) {
+      throw new BadRequestException("This user already has an address. Try to update it");
+    }
+
     userLogged.setAddress(address);
 
     addressRepository.save(address);
     userRepository.save(userLogged);
 
-    return modelMapper.map(address, GetAddressResponseDto.class);
+    return modelMapper.map(address, AddressResponseDto.class);
   }
 
-  public GetAddressResponseDto getAddress(String token) {
+  public AddressResponseDto getAddress(String token) {
 
     UserModel userLogged = tokenUtil.getUserFromToken(token);
 
-    return modelMapper.map(userLogged.getAddress(), GetAddressResponseDto.class);
+    return modelMapper.map(userLogged.getAddress(), AddressResponseDto.class);
   }
 
-  public List<GetAddressResponseDto> getAllAddresses(String token) {
+  public List<AddressResponseDto> getAllAddresses(String token) {
 
     UserModel userLogged = tokenUtil.getUserFromToken(token);
     if (userLogged.getRole().equals(UserModel.UserRole.USER)) {
@@ -60,12 +65,12 @@ public class AddressService {
     var allAddresses = addressRepository.findAll();
 
     return allAddresses.stream()
-        .map(address -> modelMapper.map(address, GetAddressResponseDto.class))
+        .map(address -> modelMapper.map(address, AddressResponseDto.class))
         .collect(Collectors.toList());
 
   }
 
-  public GetAddressResponseDto updateAdress(
+  public AddressResponseDto updateAdress(
       Long id, CreateAddressRequestDto body, String token) {
 
     Optional<AddressModel> foundAddress = addressRepository.findById(id);
@@ -82,7 +87,7 @@ public class AddressService {
     BeanUtils.copyProperties(body, address);
     addressRepository.save(address);
 
-    return modelMapper.map(address, GetAddressResponseDto.class);
+    return modelMapper.map(address, AddressResponseDto.class);
   }
 
   public void deleteAddress(Long id, String token) {

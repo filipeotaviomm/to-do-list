@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.todolist.todo.dtos.CreateToDoRequestDto;
-import com.todolist.todo.dtos.GetToDoResponseDto;
-import com.todolist.todo.dtos.UpdateToDoRequestDto;
+import com.todolist.todo.dtos.toDo.CreateToDoRequestDto;
+import com.todolist.todo.dtos.toDo.ToDoResponseDto;
+import com.todolist.todo.dtos.toDo.UpdateToDoRequestDto;
 import com.todolist.todo.services.ToDoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class ToDoController {
   private static final Logger logger = LoggerFactory.getLogger(ToDoController.class);
 
   @PostMapping
-  ResponseEntity<GetToDoResponseDto> create(
+  ResponseEntity<ToDoResponseDto> create(
       @Valid @RequestBody CreateToDoRequestDto body,
       @RequestHeader("Authorization") String token) {
 
@@ -41,20 +41,20 @@ public class ToDoController {
   }
 
   @GetMapping("/all")
-  List<GetToDoResponseDto> listAll(
+  List<ToDoResponseDto> listAll(
       @RequestHeader("Authorization") String token) {
 
     return toDoService.listAllToDos(token);
   }
 
   @GetMapping("/{id}")
-  GetToDoResponseDto list(
+  ToDoResponseDto list(
       @PathVariable Long id, @RequestHeader("Authorization") String token) {
     return toDoService.listToDoById(id, token);
   }
 
   @PatchMapping("/{id}")
-  GetToDoResponseDto update(
+  ToDoResponseDto update(
       @PathVariable Long id,
       @Valid @RequestBody UpdateToDoRequestDto body,
       @RequestHeader("Authorization") String token) {

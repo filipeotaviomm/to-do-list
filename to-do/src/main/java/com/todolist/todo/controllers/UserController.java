@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.todolist.todo.dtos.CreateUserRequestDto;
-import com.todolist.todo.dtos.GetUserResponseDto;
-import com.todolist.todo.dtos.UpdateUserRequestDto;
+import com.todolist.todo.dtos.user.CreateUserRequestDto;
+import com.todolist.todo.dtos.user.UpdateUserRequestDto;
+import com.todolist.todo.dtos.user.UserResponseDto;
 import com.todolist.todo.services.UserService;
 
 import jakarta.validation.Valid;
@@ -31,7 +31,7 @@ public class UserController {
   private final UserService userService;
 
   @PostMapping("/register")
-  ResponseEntity<GetUserResponseDto> create(
+  ResponseEntity<UserResponseDto> create(
       @Valid @RequestBody CreateUserRequestDto body) {
 
     return ResponseEntity.status(HttpStatus.CREATED)
@@ -40,17 +40,17 @@ public class UserController {
 
   @GetMapping("/all")
   @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-  List<GetUserResponseDto> getUser() {
+  List<UserResponseDto> getUser() {
     return userService.getAllUsers();
   }
 
   @GetMapping("/{id}")
-  GetUserResponseDto getUserById(@PathVariable UUID id, @RequestHeader("Authorization") String token) {
+  UserResponseDto getUserById(@PathVariable UUID id, @RequestHeader("Authorization") String token) {
     return userService.getUserById(id, token);
   }
 
   @PatchMapping("/{id}")
-  GetUserResponseDto updateUser(
+  UserResponseDto updateUser(
       @PathVariable UUID id, @Valid @RequestBody UpdateUserRequestDto body,
       @RequestHeader("Authorization") String token) {
     return userService.updateUser(id, body, token);

@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.todolist.todo.dtos.GetToDoTagResponseDto;
-import com.todolist.todo.dtos.TagRequestDto;
-import com.todolist.todo.dtos.TagResponseDto;
+import com.todolist.todo.dtos.tag.TagRequestDto;
+import com.todolist.todo.dtos.tag.TagResponseDto;
+import com.todolist.todo.dtos.tag.ToDoTagResponseDto;
 import com.todolist.todo.services.TagService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class TagController {
   private final TagService tagService;
 
   @PostMapping("/{id}/tag")
-  ResponseEntity<GetToDoTagResponseDto> createAndAdd(
+  ResponseEntity<ToDoTagResponseDto> createAndAdd(
       @PathVariable Long id,
       @Valid @RequestBody TagRequestDto body,
       @RequestHeader("Authorization") String token) {
@@ -57,7 +57,7 @@ public class TagController {
   }
 
   @DeleteMapping("/{toDoId}/tag/{tagId}")
-  ResponseEntity<GetToDoTagResponseDto> createAndAdd(
+  ResponseEntity<ToDoTagResponseDto> createAndAdd(
       @PathVariable Long toDoId,
       @PathVariable Long tagId,
       @RequestHeader("Authorization") String token) {
