@@ -23,7 +23,7 @@ public class ToDoModel {
   private Long id;
 
   @NotBlank(message = "Name is mandatory")
-  @Size(max = 255, message = "Name cannot be longer than 255 characters")
+  @Size(max = 30, message = "Name cannot be longer than 30 characters")
   private String name;
 
   @NotBlank(message = "Description is mandatory")

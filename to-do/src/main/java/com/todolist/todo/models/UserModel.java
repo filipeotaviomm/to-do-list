@@ -29,7 +29,7 @@ public class UserModel implements UserDetails {
   private UUID id;
 
   @NotBlank(message = "Name is mandatory")
-  @Size(max = 20, message = "Name cannot be longer than 20 characters")
+  @Size(max = 30, message = "Name cannot be longer than 30 characters")
   private String name;
 
   @NotBlank(message = "Email is mandatory")
@@ -44,6 +44,7 @@ public class UserModel implements UserDetails {
   private String username;
 
   @NotBlank(message = "Password is mandatory")
+  @Size(max = 255)
   private String password;
 
   @Enumerated(EnumType.STRING)

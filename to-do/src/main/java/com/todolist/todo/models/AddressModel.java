@@ -24,18 +24,18 @@ public class AddressModel {
   private String street;
 
   @NotBlank(message = "Zip Code is mandatory")
-  @Size(max = 8, message = "Zip Code cannot be longer than 8 characters")
+  @Size(min = 8, max = 8, message = "Zip Code must have 8 characters")
   private String zipCode;
 
   @NotNull(message = "Number Code is mandatory")
-  private Integer number;
+  private String number;
 
   @NotBlank(message = "City is mandatory")
   @Size(max = 20, message = "City cannot be longer than 20 characters")
   private String city;
 
   @NotBlank(message = "State is mandatory")
-  @Size(max = 2, message = "City cannot be longer than 2 characters")
+  @Size(min = 2, max = 2, message = "City must have 2 characters")
   private String state;
 
   @OneToOne(mappedBy = "address")

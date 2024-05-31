@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +23,8 @@ public class TagModel {
   @Column(name = "tag_id")
   private Long id;
 
+  @NotBlank(message = "Tag name is mandatory")
+  @Size(max = 10, message = "Tag name cannot be longer than 10 characters")
   private String name;
 
   @ManyToMany(mappedBy = "tags")
