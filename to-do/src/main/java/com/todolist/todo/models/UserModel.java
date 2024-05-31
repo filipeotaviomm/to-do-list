@@ -28,6 +28,9 @@ public class UserModel implements UserDetails {
   @Column(name = "user_id")
   private UUID id;
 
+  @Column(nullable = true, length = 350)
+  private String profileImageUrl;
+
   @NotBlank(message = "Name is mandatory")
   @Size(max = 30, message = "Name cannot be longer than 30 characters")
   private String name;

@@ -16,6 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserResponseDto {
         private UUID id;
+        private String profileImageUrl;
         private String name;
         private String email;
         private String username;
@@ -23,6 +24,7 @@ public class UserResponseDto {
 
         public UserResponseDto(ToDoModel toDo) {
                 this.id = toDo.getUser().getId();
+                this.profileImageUrl = toDo.getUser().getProfileImageUrl();
                 this.name = toDo.getUser().getName();
                 this.email = toDo.getUser().getEmail();
                 this.username = toDo.getUser().getUsername();
