@@ -36,7 +36,7 @@ public class AddressController {
         .body(addressService.createAddress(body, token));
   }
 
-  @GetMapping("/address")
+  @GetMapping("/address/current")
   AddressResponseDto get(@RequestHeader("Authorization") String token) {
     return addressService.getAddress(token);
   }
